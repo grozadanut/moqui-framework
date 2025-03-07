@@ -1,0 +1,3 @@
+<addons default="moqui-linic-legacy">
+    <component name="moqui-linic-legacy" group="grozadanut" version="" branch="master" repository="github"/>
+</addons>
