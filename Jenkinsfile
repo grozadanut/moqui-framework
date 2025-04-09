@@ -11,7 +11,7 @@ pipeline {
             steps {
                 sh '''
                 cd docker
-                docker compose -f opensearch-compose up -d
+                docker compose -f opensearch-compose.yml up -d
                 '''
             }
         }
@@ -50,7 +50,7 @@ pipeline {
             sh '''
             ./gradlew cleanAll
             cd docker
-            docker compose -f opensearch-compose stop
+            docker compose -f opensearch-compose.yml stop
             ./clean.sh
             '''
         }
