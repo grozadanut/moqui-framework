@@ -11,6 +11,7 @@ pipeline {
             steps {
                 sh '''
                 cd docker
+                ./clean.sh
                 docker compose -f opensearch-compose.yml up -d
                 '''
             }
@@ -30,9 +31,6 @@ pipeline {
         stage('Load demo data') {
             steps {
                 sh '''
-                cd docker
-                ./clean.sh
-                cd ..
                 ./gradlew cleanDb
                 ./gradlew load
                 '''
