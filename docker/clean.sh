@@ -10,8 +10,8 @@ rm -Rf runtime1/
 rm -Rf runtime2/
 rm -Rf db/
 rm -Rf $search_name/data/nodes
-rm $search_name/logs/*.log
+rm -f $search_name/logs/*.log
 
-docker rm moqui-server
-docker rm moqui-database
-docker rm nginx-proxy
+#docker rm moqui-server
+#docker rm moqui-database
+#docker rm nginx-proxy
