@@ -30,7 +30,9 @@ pipeline {
         stage('Load demo data') {
             steps {
                 sh '''
-                ./docker/clean.sh
+                cd docker
+                ./clean.sh
+                cd ..
                 ./gradlew cleanDb
                 ./gradlew load
                 '''
