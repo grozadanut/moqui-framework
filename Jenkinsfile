@@ -29,8 +29,11 @@ pipeline {
         }
         stage('Load demo data') {
             steps {
-                sh "./gradlew cleanDb"
-                sh "./gradlew load"
+                sh '''
+                ./docker/clean.sh
+                ./gradlew cleanDb
+                ./gradlew load
+                '''
             }
         }
         stage('Run Tests') {
@@ -39,19 +42,12 @@ pipeline {
                 junit 'framework/build/test-results/**/*.xml'
             }
         }
-        stage('Clean data') {
-            steps {
-                sh "./gradlew cleanAll"
-            }
-        }
     }
     post {
         always {
             sh '''
-            ./gradlew cleanAll
             cd docker
             docker compose -f opensearch-compose.yml stop
-            ./clean.sh
             '''
         }
     	failure {
