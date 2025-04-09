@@ -44,6 +44,7 @@ https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
             <AppenderRef ref="ErrorFile"/>
             <AppenderRef ref="MoquiSubscribers"/>
         </Async>
+        <Sentry name="SENTRY" dsn="${sys:sentry_dsn}" />
     </Appenders>
     <Loggers>
         <Logger name="org.apache" level="warn"/>
@@ -66,6 +67,9 @@ https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
 
         <Logger name="org.moqui" level="info"/>
 
-        <Root level="info"><AppenderRef ref="AsyncLog"/></Root>
+        <Root level="info">
+            <AppenderRef ref="AsyncLog"/>
+            <AppenderRef ref="SENTRY" level="ERROR" />
+        </Root>
     </Loggers>
 </Configuration>
