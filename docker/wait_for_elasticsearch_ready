@@ -1,0 +1,31 @@
+#!/bin/bash
+
+echo "Waiting for Elasticsearch in Docker to become ready..."
+
+URL='https://localhost:9200/_cat/health?h=st'
+WAIT_SLEEP=30
+WAIT_LOOPS=5
+
+is_ready() {
+  STATUS_CODE=$(curl -k -u admin:OpenSearch1234! --write-out %{http_code} --silent --output /dev/null $URL)
+  echo "Elasticsearch status code: $STATUS_CODE"
+
+  if [ $STATUS_CODE -eq "200" ]; then
+    echo "Elasticsearch is ready!"
+    return 0
+  else
+    echo "Elasticsearch is not ready yet..."
+    return 1
+  fi
+}
+
+i=0
+while ! is_ready; do
+  i=`expr $i + 1`
+  if [ $i -ge $WAIT_LOOPS ]; then
+    echo "$(date) - still not ready, giving up"
+    exit 1
+  fi
+  echo "$(date) - waiting to be ready"
+  sleep $WAIT_SLEEP
+done

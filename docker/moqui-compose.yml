@@ -1,0 +1,105 @@
+# A Docker Compose application with Moqui, Postgres, OpenSearch, OpenSearch Dashboards, and virtual hosting through
+# nginx-proxy supporting multiple moqui instances on different hostnames.
+
+# Run with something like this for detached mode:
+# $ docker compose -f moqui-postgres-compose.yml -p moqui up -d
+# Or to copy runtime directories for mounted volumes, set default settings, etc use something like this:
+# $ ./compose-run.sh moqui-postgres-compose.yml
+# This sets the project/app name to 'moqui' and the network will be 'moqui_default', to be used by external moqui containers
+
+# Test locally by adding the virtual host to /etc/hosts or with something like:
+# $ curl -H "Host: moqui.local" localhost/Login
+
+# To run an additional instance of moqui run something like this (but with
+# many more arguments for volume mapping, db setup, etc):
+# $ docker run -e VIRTUAL_HOST=moqui2.local --name moqui2_local --network moqui_default moqui
+
+# To import data from the docker host using port 5432 mapped for 127.0.0.1 only use something like this:
+# $ psql -h 127.0.0.1 -p 5432 -U moqui -W moqui < pg-dump.sql
+
+services:
+  moqui-server:
+    image: grozadanut/moqui:develop
+    container_name: moqui-server
+    command: conf=conf/MoquiProductionConf.xml
+    restart: always
+    ports:
+      - 8085:80
+      - 8443:443
+    volumes:
+     - ./runtime/conf:/opt/moqui/runtime/conf
+     - ./runtime/lib:/opt/moqui/runtime/lib
+     - ./runtime/classes:/opt/moqui/runtime/classes
+     - ./runtime/ecomponent:/opt/moqui/runtime/ecomponent
+     - ./runtime/log:/opt/moqui/runtime/log
+     - ./runtime/txlog:/opt/moqui/runtime/txlog
+     - ./runtime/sessions:/opt/moqui/runtime/sessions
+     # this one isn't needed when not using H2/etc: - ./runtime/db:/opt/moqui/runtime/db
+    environment:
+     - "JAVA_TOOL_OPTIONS=-Xms1024m -Xmx1024m"
+     - 'SENTRY_SERVERNAME=main-server'
+     - 'SENTRY_TAGS_APP=moqui'
+     - instance_purpose=production
+     - entity_ds_db_conf=postgres
+     - entity_ds_host=moqui-database
+     - entity_ds_port=5432
+     - entity_ds_database=moqui
+     - entity_ds_schema=public
+     - entity_ds_user=moqui
+     - entity_ds_password=moqui
+     - entity_ds_crypt_pass='DEFAULT_CHANGE_ME!!!'
+     # configuration for ElasticFacade.ElasticClient, make sure the old moqui-elasticsearch component is NOT included in the Moqui build
+     - elasticsearch_url=https://moqui-search:9200
+     # prefix for index names, use something distinct and not 'moqui_' or 'mantle_' which match the beginning of OOTB index names
+     - elasticsearch_index_prefix=default_
+     - elasticsearch_user=admin
+     - elasticsearch_password=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+     # moqui will accept traffic from other hosts but these are the values used for URL writing when specified:
+     #- webapp_http_port=80
+     #- webapp_https_port=443
+     #- webapp_https_enabled=true
+     - default_locale=ro_RO
+     - default_time_zone=Europe/Bucharest
+    depends_on:
+      moqui-search:
+        condition: service_healthy
+
+  moqui-search:
+    image: opensearchproject/opensearch:2.19.1
+    container_name: moqui-search
+    restart: always
+    volumes:
+      # edit these as needed to map configuration and data storage
+      - opensearch_data:/usr/share/opensearch/data
+      # - ./opensearch/config/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+      # - ./opensearch/logs:/usr/share/opensearch/logs
+    environment:
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}    # Sets the demo admin user password when using demo configuration, required for OpenSearch 2.12 and higher
+      - discovery.type=single-node
+      - network.host=_site_
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k -u admin:${OPENSEARCH_INITIAL_ADMIN_PASSWORD} --silent --fail https://moqui-search:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.19.1
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601
+    expose:
+      - '5601'
+    environment:
+      OPENSEARCH_HOSTS: '["https://moqui-search:9200"]'
+    depends_on:
+      moqui-search:
+        condition: service_healthy
