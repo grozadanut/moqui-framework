@@ -100,6 +100,7 @@ class EntityNoSqlCrud extends Specification {
 
     def "createBulk TestNoSqlEntity"() {
         when:
+        ec.entity.find("moqui.test.TestNoSqlEntity").condition([testId:"TEST1"]).one()?.delete()
         long beforeCount = ec.entity.find("moqui.test.TestNoSqlEntity").count()
         int recordCount = 200
 
