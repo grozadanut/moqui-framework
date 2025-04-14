@@ -39,30 +39,25 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh "./gradlew test"
-                junit 'framework/build/test-results/**/*.xml'
             }
         }
     }
     post {
         always {
+            junit 'framework/build/test-results/**/*.xml'
+            junit 'runtime/component/**/build/test-results/**/*.xml'
+
             sh '''
             cd docker
             docker compose -f opensearch-compose.yml stop
             '''
         }
     	failure {
-    	    junit 'framework/build/test-results/**/*.xml'
     		script {
     			def jobName = env.JOB_NAME
     			def buildNumber = env.BUILD_NUMBER
     			def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
     			def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-
-    			// Create zip archive of the test report folder
-                sh '''
-                cd framework/build/reports/tests/test
-                zip -r ${WORKSPACE}/test-report.zip . || true
-                '''
 
     			def body = """
     			<p>${jobName} - Build ${buildNumber}</p>
@@ -77,8 +72,7 @@ pipeline {
     				to: 'danut@flexbiz.ro',
     				from: 'info@flexbiz.ro',
     				replyTo: 'info@flexbiz.ro',
-    				mimeType: 'text/html',
-    				attachmentsPattern: 'test-report.zip'
+    				mimeType: 'text/html'
     			)
     		}
     	}
