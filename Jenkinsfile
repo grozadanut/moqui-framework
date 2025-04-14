@@ -25,6 +25,7 @@ pipeline {
                 ./gradlew getComponent -Pcomponent=mantle-udm
                 ./gradlew getComponent -Pcomponent=mantle-usl
                 ./gradlew getComponent -Pcomponent=PopRestStore
+                ./gradlew getComponent -Pcomponent=moqui-linic-legacy
                 '''
             }
         }
