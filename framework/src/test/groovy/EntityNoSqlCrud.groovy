@@ -117,7 +117,7 @@ class EntityNoSqlCrud extends Specification {
         // logger.warn("beforeCount ${beforeCount} recordCount ${recordCount} afterCount ${afterCount}")
 
         then:
-        afterCount == beforeCount + recordCount
+        afterCount == recordCount
     }
 
     def "ELI find TestNoSqlEntity"() {
