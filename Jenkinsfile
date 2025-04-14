@@ -31,7 +31,7 @@ pipeline {
         stage('Load demo data') {
             steps {
                 sh '''
-                ./gradlew cleanDb
+                ./gradlew cleanDb cleanLog cleanSessions cleanTempDir cleanOther
                 ./gradlew load
                 '''
             }
