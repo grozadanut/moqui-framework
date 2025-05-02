@@ -35,7 +35,7 @@
     </repository>
 
     <!-- Where to get runtime directory if not present -->
-    <runtime name="moqui-runtime" group="moqui" version="3.0.0" branch="master"/>
+    <runtime name="moqui-runtime" group="grozadanut" version="3.0.0" branch="master"/>
 
     <!-- Example Component -->
     <component name="example" group="moqui" version="3.0.0" branch="master"/>
