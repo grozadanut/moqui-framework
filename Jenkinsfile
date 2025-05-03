@@ -43,6 +43,21 @@ pipeline {
                 sh "./gradlew test"
             }
         }
+        stage('Deploy to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                        usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh '''
+                    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+                    ./gradlew addRuntime
+                    cd docker/simple
+                    ./docker-build.sh ../.. $DOCKER_USERNAME/moqui:develop
+                    docker push $DOCKER_USERNAME/moqui:develop
+                    '''
+                }
+            }
+        }
     }
     post {
         always {
