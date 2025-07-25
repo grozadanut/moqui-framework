@@ -1,3 +1,4 @@
 <addons default-repository="github">
     <component name="moqui-linic-legacy" group="grozadanut" version="" branch="master"/>
+    <component group="grozadanut" name="dav-server" branch="master"/>
 </addons>
