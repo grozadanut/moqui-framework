@@ -14,6 +14,7 @@ pipeline {
                 ./clean.sh
                 docker compose -f opensearch-compose.yml up -d
                 '''
+                sleep(time:5, unit:"SECONDS")
             }
         }
         stage('Prepare runtime') {
