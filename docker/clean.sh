@@ -10,6 +10,7 @@ rm -Rf runtime1/
 rm -Rf runtime2/
 rm -Rf db/
 find "$search_name/data/nodes" -mindepth 1 ! -name 'README' -exec rm -rf {} +
+rm -Rf $search_name/data/*.conf
 rm -f $search_name/logs/*.log
 
 #docker rm moqui-server
