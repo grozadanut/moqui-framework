@@ -35,11 +35,11 @@
     </repository>
 
     <!-- Where to get runtime directory if not present -->
-    <runtime name="moqui-runtime" group="grozadanut" version="3.0.0" branch="master"/>
+    <runtime name="moqui-runtime" group="moqui" branch="upgrade"/>
 
     <!-- Example Component -->
     <component name="example" group="moqui" version="3.0.0" branch="master"/>
-    <component name="start" group="moqui" version="1.0.0" branch="master"/>
+    <component name="start" group="moqui" version="1.0.0" branch="upgrade"/>
 
     <!-- Moqui Tool Components -->
     <component name="moqui-aws" group="moqui" version="1.1.0" branch="master"/>

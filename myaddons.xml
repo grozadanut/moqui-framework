@@ -1,2 +1,3 @@
 <addons default-repository="github">
+    <component group="grozadanut" name="dunca-scraper" branch="master"/>
 </addons>

@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/grozadanut/moqui-framework'
+                git branch: 'dunca-scraper',
+                    url: 'https://github.com/grozadanut/moqui-framework'
             }
         }
         stage('Start opensearch') {
@@ -20,13 +21,7 @@ pipeline {
         stage('Prepare runtime') {
             steps {
                 sh '''
-                ./gradlew getComponent -Pcomponent=MarbleERP
-                ./gradlew getComponent -Pcomponent=PopCommerce
-                ./gradlew getComponent -Pcomponent=HiveMind
-                ./gradlew getComponent -Pcomponent=mantle-udm
-                ./gradlew getComponent -Pcomponent=mantle-usl
-                ./gradlew getComponent -Pcomponent=PopRestStore
-                ./gradlew getComponent -Pcomponent=moqui-linic-legacy
+                ./gradlew getComponent -Pcomponent=dunca-scraper
                 ./gradlew gitp
                 '''
             }
@@ -53,8 +48,8 @@ pipeline {
 
                     ./gradlew addRuntime
                     cd docker/simple
-                    ./docker-build.sh ../.. $DOCKER_USERNAME/moqui:develop
-                    docker push $DOCKER_USERNAME/moqui:develop
+                    ./docker-build.sh ../.. $DOCKER_USERNAME/dunca-scraper:develop
+                    docker push $DOCKER_USERNAME/dunca-scraper:develop
                     '''
                 }
             }
