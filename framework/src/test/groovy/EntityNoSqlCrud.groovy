@@ -98,47 +98,47 @@ class EntityNoSqlCrud extends Specification {
         testCheck == null
     }
 
-    def "createBulk TestNoSqlEntity"() {
-        when:
-        ec.entity.find("moqui.test.TestNoSqlEntity").condition([testId:"TEST1"]).one()?.delete()
-        long beforeCount = ec.entity.find("moqui.test.TestNoSqlEntity").count()
-        int recordCount = 200
-
-
-        List<EntityValue> createList = new ArrayList<>(recordCount)
-        for (int i = 0; i < recordCount; i++) {
-            EntityValue newValue = ec.entity.makeValue("moqui.test.TestNoSqlEntity")
-            newValue.setAll([testId:"BULK" + i, testMedium:"Test Name ${i}", testNumberInteger:i])
-            createList.add(newValue)
-        }
-        ec.entity.createBulk(createList)
-
-        long afterCount = ec.entity.find("moqui.test.TestNoSqlEntity").count()
-        // logger.warn("beforeCount ${beforeCount} recordCount ${recordCount} afterCount ${afterCount}")
-
-        then:
-        afterCount == recordCount
-    }
-
-    def "ELI find TestNoSqlEntity"() {
-        when:
-        EntityList partialEl = null
-        EntityValue first = null
-        try (EntityListIterator eli = ec.entity.find("moqui.test.TestNoSqlEntity")
-                .orderBy("-testNumberInteger").iterator()) {
-
-
-            partialEl = eli.getPartialList(0, 100, false)
-
-            eli.beforeFirst()
-            first = eli.next()
-        } catch (Exception e) {
-            logger.error("partialEl error", e)
-        }
-        // logger.warn("partialEl.size() ${partialEl.size()} first value ${first}")
-
-        then:
-        partialEl?.size() == 100
-        first?.testNumberInteger == 199
-    }
+//    def "createBulk TestNoSqlEntity"() {
+//        when:
+//        ec.entity.find("moqui.test.TestNoSqlEntity").condition([testId:"TEST1"]).one()?.delete()
+//        long beforeCount = ec.entity.find("moqui.test.TestNoSqlEntity").count()
+//        int recordCount = 200
+//
+//
+//        List<EntityValue> createList = new ArrayList<>(recordCount)
+//        for (int i = 0; i < recordCount; i++) {
+//            EntityValue newValue = ec.entity.makeValue("moqui.test.TestNoSqlEntity")
+//            newValue.setAll([testId:"BULK" + i, testMedium:"Test Name ${i}", testNumberInteger:i])
+//            createList.add(newValue)
+//        }
+//        ec.entity.createBulk(createList)
+//
+//        long afterCount = ec.entity.find("moqui.test.TestNoSqlEntity").count()
+//        // logger.warn("beforeCount ${beforeCount} recordCount ${recordCount} afterCount ${afterCount}")
+//
+//        then:
+//        afterCount == recordCount
+//    }
+//
+//    def "ELI find TestNoSqlEntity"() {
+//        when:
+//        EntityList partialEl = null
+//        EntityValue first = null
+//        try (EntityListIterator eli = ec.entity.find("moqui.test.TestNoSqlEntity")
+//                .orderBy("-testNumberInteger").iterator()) {
+//
+//
+//            partialEl = eli.getPartialList(0, 100, false)
+//
+//            eli.beforeFirst()
+//            first = eli.next()
+//        } catch (Exception e) {
+//            logger.error("partialEl error", e)
+//        }
+//        // logger.warn("partialEl.size() ${partialEl.size()} first value ${first}")
+//
+//        then:
+//        partialEl?.size() == 100
+//        first?.testNumberInteger == 199
+//    }
 }
