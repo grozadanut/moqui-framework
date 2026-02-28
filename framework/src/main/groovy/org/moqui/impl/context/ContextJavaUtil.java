@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import groovy.lang.GString;
 import org.codehaus.groovy.runtime.StringGroovyMethods;
 import org.jetbrains.annotations.NotNull;
@@ -589,6 +590,7 @@ public class ContextJavaUtil {
         module.addSerializer(LiteStringMap.class, new ContextJavaUtil.LiteStringMapJsonSerializer());
         module.addSerializer(ResourceReference.class, new ContextJavaUtil.ResourceReferenceJsonSerializer());
         jacksonMapper.registerModule(module);
+        jacksonMapper.registerModule(new JavaTimeModule());
     }
     static class GStringJsonSerializer extends StdSerializer<GString> {
         GStringJsonSerializer() { super(GString.class); }
