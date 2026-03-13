@@ -65,7 +65,7 @@ services:
         condition: service_healthy
 
   moqui-search:
-    image: opensearchproject/opensearch:2.19.1
+    image: opensearchproject/opensearch:3.4.0
     container_name: moqui-search
     restart: always
     volumes:
@@ -92,12 +92,12 @@ services:
       retries: 5
 
   opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.19.1
+    image: opensearchproject/opensearch-dashboards:3.4.0
     container_name: opensearch-dashboards
+    links:
+      - moqui-search
     ports:
-      - 5601:5601
-    expose:
-      - '5601'
+      - "5601:5601"
     environment:
       OPENSEARCH_HOSTS: '["https://moqui-search:9200"]'
     depends_on:
