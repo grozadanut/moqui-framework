@@ -9,10 +9,10 @@ rm -Rf runtime/
 rm -Rf runtime1/
 rm -Rf runtime2/
 rm -Rf db/
-rm -Rf $search_name/data/nodes
+find "$search_name/data/nodes" -mindepth 1 ! -name 'README' -exec rm -rf {} +
 rm -Rf $search_name/data/*.conf
 rm $search_name/logs/*.log
 
-docker rm moqui-server
-docker rm moqui-database
-docker rm nginx-proxy
+#docker rm moqui-server
+#docker rm moqui-database
+#docker rm nginx-proxy

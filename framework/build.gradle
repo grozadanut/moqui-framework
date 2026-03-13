@@ -114,6 +114,7 @@ dependencies {
 
     // Jackson Databind (JSON, etc)
     api 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
 
     // Jetty HTTP Client and Proxy Servlet
     api 'org.eclipse.jetty:jetty-client:12.1.5' // Apache 2.0
@@ -146,6 +147,8 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.25.2'
     runtimeOnly 'org.apache.logging.log4j:log4j-jcl:2.25.2'
     runtimeOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2'
+    
+    implementation 'io.sentry:sentry-log4j2:8.5.0'
 
     // SubEtha SMTP, depends on jakarta.mail-api which is provided
     api("com.github.davidmoten:subethasmtp:7.2.0") { transitive = false }

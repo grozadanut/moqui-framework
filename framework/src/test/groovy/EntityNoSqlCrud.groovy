@@ -100,6 +100,7 @@ class EntityNoSqlCrud extends Specification {
 
     def "createBulk TestNoSqlEntity"() {
         when:
+        ec.entity.find("moqui.test.TestNoSqlEntity").condition([testId:"TEST1"]).one()?.delete()
         long beforeCount = ec.entity.find("moqui.test.TestNoSqlEntity").count()
         int recordCount = 200
 
@@ -116,7 +117,7 @@ class EntityNoSqlCrud extends Specification {
         // logger.warn("beforeCount ${beforeCount} recordCount ${recordCount} afterCount ${afterCount}")
 
         then:
-        afterCount == beforeCount + recordCount
+        afterCount == recordCount
     }
 
     def "ELI find TestNoSqlEntity"() {
