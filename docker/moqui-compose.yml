@@ -21,7 +21,7 @@ services:
   moqui-server:
     image: grozadanut/moqui:develop
     container_name: moqui-server
-    command: conf=conf/MoquiProductionConf.xml
+    command: conf=conf/MoquiProductionConf.xml port=80
     restart: always
     ports:
       - 8085:80
