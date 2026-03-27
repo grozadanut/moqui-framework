@@ -42,6 +42,14 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh "./gradlew test"
+                junit 'framework/build/test-results/**/*.xml'
+                junit 'runtime/component/**/build/test-results/**/*.xml'
+
+                sh '''
+                cd docker
+                docker compose -f opensearch-compose.yml stop
+                ./clean.sh
+                '''
             }
         }
         stage('Deploy to DockerHub') {
@@ -51,24 +59,14 @@ pipeline {
                     sh '''
                     echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-                    ./gradlew addRuntime
+                    ./gradlew cleanAll
+                    ./gradlew build
                     cd docker/simple
                     ./docker-build.sh ../.. $DOCKER_USERNAME/moqui:develop
                     docker push $DOCKER_USERNAME/moqui:develop
                     '''
                 }
             }
-        }
-    }
-    post {
-        always {
-            junit 'framework/build/test-results/**/*.xml'
-            junit 'runtime/component/**/build/test-results/**/*.xml'
-
-            sh '''
-            cd docker
-            docker compose -f opensearch-compose.yml stop
-            '''
         }
     }
 }
