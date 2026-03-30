@@ -45,6 +45,10 @@ class RemoteRestServiceRunner implements ServiceRunner {
         }
 
         RestClient rc = eci.serviceFacade.rest().method(method)
+        if (parameters.basicUser && parameters.basicPassword)
+            rc.basicAuth(parameters.basicUser as String, parameters.basicPassword as String)
+        parameters.remove("basicUser")
+        parameters.remove("basicPassword")
 
         if (location.contains('${')) {
             // TODO: consider somehow removing parameters used in location from the parameters Map,
@@ -62,7 +66,7 @@ class RemoteRestServiceRunner implements ServiceRunner {
             // NOTE: another option for parameters might be addBodyParameters(parameters), but a JSON body in the request is more common except for GET
             if (parameters != null && !parameters.isEmpty()) rc.jsonObject(parameters)
         }
-        // logger.warn("remote-rest service call to ${rc.getUriString()}")
+        logger.debug("remote-rest service call to ${rc.getBodyText()}")
 
         // TODO/FUTURE: other options for remote authentication with headers/etc? a big limitation here, needs to be in parameters for now
 

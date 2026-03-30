@@ -422,7 +422,7 @@ public class RestClient {
                     curList = new ArrayList<>();
                     headers.put(name, curList);
                 }
-                curList.addAll(Arrays.asList(hdr.getValues()));
+                curList.add(hdr.getValue());
             }
 
             // get the response body
