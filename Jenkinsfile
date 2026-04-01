@@ -59,7 +59,7 @@ pipeline {
                     sh '''
                     echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-                    ./gradlew cleanAll
+                    ./gradlew cleanDb cleanLog cleanSessions cleanTempDir cleanOther
                     ./gradlew build
                     cd docker/simple
                     ./docker-build.sh ../.. $DOCKER_USERNAME/moqui:develop
