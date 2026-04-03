@@ -171,6 +171,8 @@ class ScreenTestImpl implements ScreenTest {
         long renderTime = 0
         Map postRenderContext = (Map) null
         protected List<String> errorMessages = []
+        protected Map<String, Object> responseHeaders = (Map) null
+        protected int responseCode = 0
 
         ScreenTestRenderImpl(ScreenTestImpl sti, String screenPath, Map<String, Object> parameters, String requestMethod) {
             this.sti = sti
@@ -249,6 +251,8 @@ class ScreenTestImpl implements ScreenTest {
                 // get the response text from the WebFacadeStub
                 stri.outputString = wfs.getResponseText()
                 stri.jsonObj = wfs.getResponseJsonObj()
+                stri.responseHeaders = wfs.getHttpServletResponseStub().headers
+                stri.responseCode = wfs.getHttpServletResponseStub().status
             } catch (Throwable t) {
                 String errMsg = "Exception in render of ${stri.screenPath}: ${t.toString()}"
                 logger.warn(errMsg, t)
@@ -290,6 +294,8 @@ class ScreenTestImpl implements ScreenTest {
         @Override long getRenderTime() { return renderTime }
         @Override Map getPostRenderContext() { return postRenderContext }
         @Override List<String> getErrorMessages() { return errorMessages }
+        @Override Map<String, Object> getResponseHeaders() { return responseHeaders }
+        @Override int getResponseCode() { return responseCode }
 
         @Override
         boolean assertContains(String text) {

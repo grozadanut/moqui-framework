@@ -67,6 +67,8 @@ public interface ScreenTest {
         long getRenderTime();
         Map getPostRenderContext();
         List<String> getErrorMessages();
+        Map<String, Object> getResponseHeaders();
+        int getResponseCode();
         boolean assertContains(String text);
         boolean assertNotContains(String text);
         boolean assertRegex(String regex);
