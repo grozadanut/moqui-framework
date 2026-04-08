@@ -33,7 +33,7 @@ public class ParameterInfo {
     protected final static Logger logger = LoggerFactory.getLogger(ParameterInfo.class);
 
     public enum ParameterAllowHtml { ANY, SAFE, NONE }
-    public enum ParameterType { STRING, INTEGER, LONG, FLOAT, DOUBLE, BIG_DECIMAL, BIG_INTEGER, TIME, DATE, TIMESTAMP, LIST, SET, MAP }
+    public enum ParameterType { STRING, INTEGER, LONG, FLOAT, DOUBLE, BIG_DECIMAL, BIG_INTEGER, TIME, DATE, TIMESTAMP, LIST, SET, MAP, LOCAL_TIME, LOCAL_DATE, LOCAL_DATE_TIME }
     public static Map<String, ParameterType> typeEnumByString = new HashMap<>();
     static {
         typeEnumByString.put("String", ParameterType.STRING); typeEnumByString.put("java.lang.String", ParameterType.STRING);
@@ -44,6 +44,9 @@ public class ParameterInfo {
         typeEnumByString.put("BigDecimal", ParameterType.BIG_DECIMAL); typeEnumByString.put("java.math.BigDecimal", ParameterType.BIG_DECIMAL);
         typeEnumByString.put("BigInteger", ParameterType.BIG_INTEGER); typeEnumByString.put("java.math.BigInteger", ParameterType.BIG_INTEGER);
 
+        typeEnumByString.put("LocalTime", ParameterType.LOCAL_TIME); typeEnumByString.put("java.time.LocalTime", ParameterType.LOCAL_TIME);
+        typeEnumByString.put("LocalDate", ParameterType.LOCAL_DATE); typeEnumByString.put("java.time.LocalDate", ParameterType.LOCAL_DATE);
+        typeEnumByString.put("LocalDateTime", ParameterType.LOCAL_DATE_TIME); typeEnumByString.put("java.time.LocalDateTime", ParameterType.LOCAL_DATE_TIME);
         typeEnumByString.put("Time", ParameterType.TIME); typeEnumByString.put("java.sql.Time", ParameterType.TIME);
         typeEnumByString.put("Date", ParameterType.DATE); typeEnumByString.put("java.sql.Date", ParameterType.DATE);
         typeEnumByString.put("Timestamp", ParameterType.TIMESTAMP); typeEnumByString.put("java.sql.Timestamp", ParameterType.TIMESTAMP);
@@ -188,6 +191,21 @@ public class ParameterInfo {
                     break;
                 case TIMESTAMP:
                     converted = eci.l10nFacade.parseTimestamp(valueStr, format);
+                    if (converted == null) eci.messageFacade.addValidationError(null, namePrefix + name,
+                            serviceName, MessageFormat.format(eci.getL10n().localize("Value entered ({0}) could not be converted to a {1}{2,choice,0#|1# using format [}{3}{2,choice,0#|1#]}"),valueStr,type,(format != null ? 1 : 0),(format == null ? "" : format)), null);
+                    break;
+                case LOCAL_DATE:
+                    converted = eci.l10nFacade.parseLocalDate(valueStr);
+                    if (converted == null) eci.messageFacade.addValidationError(null, namePrefix + name,
+                            serviceName, MessageFormat.format(eci.getL10n().localize("Value entered ({0}) could not be converted to a {1}{2,choice,0#|1# using format [}{3}{2,choice,0#|1#]}"),valueStr,type,(format != null ? 1 : 0),(format == null ? "" : format)), null);
+                    break;
+                case LOCAL_TIME:
+                    converted = eci.l10nFacade.parseLocalTime(valueStr);
+                    if (converted == null) eci.messageFacade.addValidationError(null, namePrefix + name,
+                            serviceName, MessageFormat.format(eci.getL10n().localize("Value entered ({0}) could not be converted to a {1}{2,choice,0#|1# using format [}{3}{2,choice,0#|1#]}"),valueStr,type,(format != null ? 1 : 0),(format == null ? "" : format)), null);
+                    break;
+                case LOCAL_DATE_TIME:
+                    converted = eci.l10nFacade.parseLocalDateTime(valueStr);
                     if (converted == null) eci.messageFacade.addValidationError(null, namePrefix + name,
                             serviceName, MessageFormat.format(eci.getL10n().localize("Value entered ({0}) could not be converted to a {1}{2,choice,0#|1# using format [}{3}{2,choice,0#|1#]}"),valueStr,type,(format != null ? 1 : 0),(format == null ? "" : format)), null);
                     break;

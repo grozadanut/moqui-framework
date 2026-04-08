@@ -16,6 +16,9 @@ package org.moqui.context;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -80,6 +83,9 @@ public interface L10nFacade {
     Timestamp parseTimestamp(String input, String format, Locale locale, TimeZone timeZone);
     java.util.Calendar parseDateTime(String input, String format);
     String formatDateTime(Calendar input, String format, Locale locale, TimeZone tz);
+    LocalDate parseLocalDate(String text);
+    LocalTime parseLocalTime(String text);
+    LocalDateTime parseLocalDateTime(String text);
 
     java.math.BigDecimal parseNumber(String input, String format);
     String formatNumber(Number input, String format, Locale locale);

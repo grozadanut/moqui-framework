@@ -50,6 +50,9 @@ public class MClassLoader extends ClassLoader {
         m.put("java.sql.Timestamp", java.sql.Timestamp.class); m.put("Timestamp", java.sql.Timestamp.class);
         m.put("java.sql.Time", java.sql.Time.class); m.put("Time", java.sql.Time.class);
         m.put("java.sql.Date", java.sql.Date.class); m.put("Date", java.sql.Date.class);
+        m.put("java.time.LocalTime", java.time.LocalTime.class); m.put("LocalTime", java.time.LocalTime.class);
+        m.put("java.time.LocalDate", java.time.LocalDate.class); m.put("LocalDate", java.time.LocalDate.class);
+        m.put("java.time.LocalDateTime", java.time.LocalDateTime.class); m.put("LocalDateTime", java.time.LocalDateTime.class);
         m.put("java.util.Locale", Locale.class); m.put("java.util.TimeZone", TimeZone.class);
         m.put("java.lang.Byte", java.lang.Byte.class); m.put("java.lang.Character", java.lang.Character.class);
         m.put("java.lang.Integer", java.lang.Integer.class); m.put("Integer", java.lang.Integer.class);

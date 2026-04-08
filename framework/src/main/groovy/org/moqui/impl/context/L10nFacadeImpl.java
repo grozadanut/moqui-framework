@@ -30,6 +30,9 @@ import java.text.NumberFormat;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import org.apache.commons.validator.routines.BigDecimalValidator;
@@ -291,6 +294,45 @@ public class L10nFacadeImpl implements L10nFacade {
         String dateStr = calendarValidator.format(input, format, locale);
         // logger.warn("============= formatDate input=${input} dateStr=${dateStr} long=${input.getTime()}")
         return dateStr;
+    }
+
+    @Override
+    public LocalDate parseLocalDate(final String text) {
+        if (text == null)
+            return null;
+
+        try {
+            return LocalDate.parse(text);
+        } catch (final Exception e) {
+            if (logger.isTraceEnabled()) logger.trace("parseLocalDate", e);
+            return null;
+        }
+    }
+
+    @Override
+    public LocalTime parseLocalTime(final String text) {
+        if (text == null)
+            return null;
+
+        try {
+            return LocalTime.parse(text);
+        } catch (final Exception e) {
+            if (logger.isTraceEnabled()) logger.trace("parseLocalTime", e);
+            return null;
+        }
+    }
+
+    @Override
+    public LocalDateTime parseLocalDateTime(final String text) {
+        if (text == null)
+            return null;
+
+        try {
+            return LocalDateTime.parse(text);
+        } catch (final Exception e) {
+            if (logger.isTraceEnabled()) logger.trace("parseLocalDateTime", e);
+            return null;
+        }
     }
 
     static final ArrayList<String> timestampFormats;
