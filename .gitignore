@@ -78,3 +78,6 @@ Desktop.ini
 
 # Linux auto files
 *~
+.voiden
+.voiden/.process.env.json
+*.env
