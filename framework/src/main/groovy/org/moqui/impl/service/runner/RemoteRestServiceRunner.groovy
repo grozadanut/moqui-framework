@@ -49,6 +49,10 @@ class RemoteRestServiceRunner implements ServiceRunner {
             rc.basicAuth(parameters.basicUser as String, parameters.basicPassword as String)
         parameters.remove("basicUser")
         parameters.remove("basicPassword")
+        if (parameters.httpHeaders && parameters.httpHeaders instanceof Map) {
+            rc.addHeaders(parameters.httpHeaders as Map)
+            parameters.remove("httpHeaders")
+        }
 
         if (location.contains('${')) {
             // TODO: consider somehow removing parameters used in location from the parameters Map,
@@ -67,8 +71,6 @@ class RemoteRestServiceRunner implements ServiceRunner {
             if (parameters != null && !parameters.isEmpty()) rc.jsonObject(parameters)
         }
         logger.debug("remote-rest service call to ${rc.getBodyText()}")
-
-        // TODO/FUTURE: other options for remote authentication with headers/etc? a big limitation here, needs to be in parameters for now
 
         RestClient.RestResponse response = rc.call()
 
