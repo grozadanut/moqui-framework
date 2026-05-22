@@ -235,8 +235,8 @@
                 <url-pattern>/kibana/*</url-pattern>
             </servlet>
 
-            <!-- timeout session in 60 minutes without a request -->
-            <session-config timeout="60"/>
+            <!-- timeout session in 240 minutes(4 hours) without a request -->
+            <session-config timeout="240"/>
 
             <!-- Notification Message Endpoint -->
             <endpoint path="/notws" class="org.moqui.impl.webapp.NotificationEndpoint" timeout="3600000" enabled="true"/>
