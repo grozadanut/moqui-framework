@@ -395,6 +395,27 @@ along with this software (see the LICENSE.md file). If not, see
         <alias name="permissionFromDate" entity-alias="UGP" field="fromDate"/>
         <alias name="permissionThruDate" entity-alias="UGP" field="thruDate"/>
     </view-entity>
+    <entity entity-name="TrustedDevice" package="moqui.security" use="transactional">
+        <field name="deviceId" type="id" is-pk="true"/>
+        <field name="deviceSecret" type="text-medium">
+            <description>NOTE: not an encrypted field because one way hash encryption used for it</description></field>
+        <field name="secretSalt" type="text-medium"/>
+    </entity>
+    <entity entity-name="TrustedDeviceUserAccount" package="moqui.security" use="transactional">
+        <field name="deviceId" type="id" is-pk="true"/>
+        <field name="userId" type="id" is-pk="true"/>
+        <field name="fromDate" type="date-time"/>
+        <field name="thruDate" type="date-time"/>
+        <field name="name" type="text-medium"/>
+        <relationship type="one" related="moqui.security.TrustedDevice" short-alias="device"/>
+        <relationship type="one" related="moqui.security.UserAccount" short-alias="user"/>
+    </entity>
+    <view-entity entity-name="TrustedDeviceUsers" package="moqui.security">
+        <member-entity entity-alias="TDU" entity-name="moqui.security.TrustedDeviceUserAccount"/>
+        <member-relationship entity-alias="TD" join-from-alias="TDU" relationship="device"/>
+        <alias-all entity-alias="TDU"/>
+        <alias-all entity-alias="TD"/>
+    </view-entity>
 
     <entity entity-name="UserLoginKey" package="moqui.security" use="transactional" cache="never">
         <description>A login key is an alternate way to authenticate a user, generally issued for temporary use sort of

@@ -38,6 +38,8 @@ along with this software (see the LICENSE.md file). If not, see
             <parameter name="username"/>
             <parameter name="password"/>
             <parameter name="code"/>
+            <parameter name="trustDevice" type="Boolean"/>
+            <parameter name="trustThruDate" type="Timestamp" default="ec.user.nowTimestamp + 30"/>
         </in-parameters>
         <out-parameters>
             <parameter name="loggedIn" type="Boolean"/>
@@ -56,6 +58,10 @@ along with this software (see the LICENSE.md file). If not, see
                             in-map="[code:code]" out-map="validateOut"/>
                     <if condition="validateOut.verified"><then>
                         <set field="loggedIn" from="ec.user.internalLoginUser(validateOut.username)"/>
+                        <if condition="loggedIn &amp;&amp; trustDevice">
+                            <service-call name="org.moqui.impl.UserServices.trust#Device"
+                                          in-map="[thruDate:trustThruDate]"/>
+                        </if>
                     </then><else>
                         <message type="danger" public="true">Authentication code is not valid</message>
                     </else></if>
@@ -64,6 +70,45 @@ along with this software (see the LICENSE.md file). If not, see
                 </else></if>
             </then></if>
         </actions>
+    </service>
+
+    <service verb="trust" noun="Device">
+        <in-parameters>
+            <parameter name="thruDate" type="Timestamp"/>
+        </in-parameters>
+        <actions><script><![CDATA[
+            String deviceId = org.moqui.util.WebUtilities.extractCookie(ec.web?.request.getCookies(), 'deviceId')
+            if (!deviceId || !ec.entity.find("moqui.security.TrustedDevice")
+                    .condition("deviceId", deviceId).one()) {
+                deviceId = UUID.randomUUID().toString()
+                String deviceSecret = org.moqui.util.StringUtilities.getRandomString(64)
+                def secretSalt = org.moqui.impl.context.ExecutionContextFactoryImpl.getRandomSalt()
+                Map deviceResult = ec.service.sync().name("create", "moqui.security.TrustedDevice")
+                        .parameters([deviceId: deviceId,
+                                     deviceSecret: ec.ecfi.getSimpleHash(deviceSecret, secretSalt, 'SHA-256', false),
+                                     secretSalt: secretSalt])
+                        .disableAuthz().call()
+                deviceId = (String) deviceResult.deviceId
+
+                jakarta.servlet.http.Cookie deviceIdCookie = new jakarta.servlet.http.Cookie("deviceId", deviceId)
+                deviceIdCookie.setPath("/")
+                deviceIdCookie.setHttpOnly(true)
+                if (ec.web?.request?.isSecure()) deviceIdCookie.setSecure(true)
+                ec.web?.response?.addCookie(deviceIdCookie)
+                jakarta.servlet.http.Cookie deviceSecretCookie = new jakarta.servlet.http.Cookie("deviceSecret", deviceSecret)
+                deviceSecretCookie.setPath("/")
+                deviceSecretCookie.setHttpOnly(true)
+                if (ec.web?.request?.isSecure()) deviceSecretCookie.setSecure(true)
+                ec.web?.response?.addCookie(deviceSecretCookie)
+            }
+            String curUserAgent = ec.web?.request?.getHeader("User-Agent") ?: ""
+            if (curUserAgent != null && curUserAgent.length() > 255) curUserAgent = curUserAgent.substring(0, 255)
+            ec.service.sync().name("store", "moqui.security.TrustedDeviceUserAccount")
+                    .parameters([deviceId: deviceId, userId: ec.user.userId,
+                                 fromDate: ec.user.nowTimestamp, thruDate: thruDate,
+                                 name: curUserAgent])
+                    .disableAuthz().call()
+            ]]></script></actions>
     </service>
 
     <service verb="create" noun="UserAccount" authenticate="anonymous-all" allow-remote="false">
@@ -528,6 +573,25 @@ along with this software (see the LICENSE.md file). If not, see
         <in-parameters><parameter name="userId" required="true"/></in-parameters>
         <out-parameters><parameter name="secondFactorRequired" type="Boolean"/></out-parameters>
         <actions>
+            <set field="deviceId" from="org.moqui.util.WebUtilities.extractCookie(ec.web?.request?.cookies, 'deviceId')"/>
+            <set field="deviceSecret" from="org.moqui.util.WebUtilities.extractCookie(ec.web?.request?.cookies, 'deviceSecret')"/>
+            <if condition="deviceId">
+                <entity-find entity-name="moqui.security.TrustedDeviceUsers" list="devices">
+                    <date-filter/><econdition field-name="userId"/>
+                    <econdition field-name="deviceId" from="deviceId"/>
+                </entity-find>
+                <if condition="devices.size() == 1">
+                    <set field="secretMatch" from="ec.ecfi.getSimpleHash(deviceSecret, devices[0].secretSalt, 'SHA-256', false) == devices[0].deviceSecret"/>
+                    <if condition="secretMatch"><then>
+                        <set field="secondFactorRequired" from="false"/>
+                        <return/>
+                    </then><else>
+                        <set field="secondFactorRequired" from="true"/>
+                        <log level="error" message="Device secret mismatch for deviceId=(${deviceId}) Client passed secret: (${deviceSecret})"/>
+                        <return message="Device secret mismatch" public="true" type="danger"/>
+                    </else></if>
+                </if>
+            </if>
             <entity-find-count entity-name="moqui.security.UserAuthcFactor" count-field="uafCount">
                 <date-filter/><econdition field-name="userId"/>
                 <econdition field-name="needsValidation" value="N" or-null="true"/>

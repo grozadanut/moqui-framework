@@ -15,6 +15,7 @@ package org.moqui.util;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -432,6 +433,17 @@ public class WebUtilities {
             logger.warn("Tried to set session attribute [" + name + "] with non-serializable value of type " + value.getClass().getName(), e);
             return false;
         }
+    }
+
+    public static String extractCookie(Cookie[] cookies, String name) {
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++) {
+                if (cookies[i].getName().equals(name)) {
+                    return cookies[i].getValue();
+                }
+            }
+        }
+        return null;
     }
 
     public interface AttributeContainer {
