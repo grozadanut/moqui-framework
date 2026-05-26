@@ -90,7 +90,7 @@ along with this software (see the LICENSE.md file). If not, see
                 def secretSalt = org.moqui.impl.context.ExecutionContextFactoryImpl.getRandomSalt()
                 Map deviceResult = ec.service.sync().name("create", "moqui.security.TrustedDevice")
                         .parameters([deviceId: deviceId,
-                                     deviceSecret: ec.ecfi.getSimpleHash(deviceSecret, secretSalt, 'SHA-256', false),
+                                     deviceSecret: ec.ecfi.getSimpleHash(deviceSecret, secretSalt, 'SHA-512', false),
                                      secretSalt: secretSalt])
                         .disableAuthz().call()
                 deviceId = (String) deviceResult.deviceId
@@ -596,7 +596,7 @@ along with this software (see the LICENSE.md file). If not, see
                     <econdition field-name="deviceId" from="deviceId"/>
                 </entity-find>
                 <if condition="devices.size() == 1">
-                    <set field="secretMatch" from="ec.ecfi.getSimpleHash(deviceSecret, devices[0].secretSalt, 'SHA-256', false) == devices[0].deviceSecret"/>
+                    <set field="secretMatch" from="ec.ecfi.getSimpleHash(deviceSecret, devices[0].secretSalt, 'SHA-512', false) == devices[0].deviceSecret"/>
                     <if condition="secretMatch"><then>
                         <set field="secondFactorRequired" from="false"/>
                         <return/>
