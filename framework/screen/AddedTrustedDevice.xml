@@ -15,9 +15,9 @@ along with this software (see the LICENSE.md file). If not, see
 <screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-3.xsd">
     <widgets>
         <render-mode><text type="html"><![CDATA[<html><body>]]></text></render-mode>
-        <container><label text="A fost adăugată o metodă de autentificare prin email pentru ${userEmail}"/></container>
-        <container><label text="Acest email este valid până în ${thruDateString}"/></container>
-        <container><label text="Dacă nu ați solicitat acest email, vă rugăm să anunțați administratorul și să vă resetați parola imediat."/></container>
+        <container><label text="Un dispozitiv nou a fost asociat contului:"/></container>
+        <container><label text="${name}"/></container>
+        <container><label text="Dacă nu ați solicitat acest lucru, vă rugăm să anunțați administratorul și să vă resetați parola imediat."/></container>
         <render-mode><text type="html"><![CDATA[</body></html>]]></text></render-mode>
     </widgets>
 </screen>

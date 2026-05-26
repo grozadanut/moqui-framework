@@ -76,8 +76,13 @@ along with this software (see the LICENSE.md file). If not, see
         <in-parameters>
             <parameter name="thruDate" type="Timestamp"/>
         </in-parameters>
-        <actions><script><![CDATA[
-            String deviceId = org.moqui.util.WebUtilities.extractCookie(ec.web?.request.getCookies(), 'deviceId')
+        <out-parameters>
+            <parameter name="deviceId"/>
+            <parameter name="name"/>
+        </out-parameters>
+        <actions>
+            <script><![CDATA[
+            deviceId = org.moqui.util.WebUtilities.extractCookie(ec.web?.request.getCookies(), 'deviceId')
             if (!deviceId || !ec.entity.find("moqui.security.TrustedDevice")
                     .condition("deviceId", deviceId).one()) {
                 deviceId = UUID.randomUUID().toString()
@@ -103,12 +108,22 @@ along with this software (see the LICENSE.md file). If not, see
             }
             String curUserAgent = ec.web?.request?.getHeader("User-Agent") ?: ""
             if (curUserAgent != null && curUserAgent.length() > 255) curUserAgent = curUserAgent.substring(0, 255)
+            name = curUserAgent
             ec.service.sync().name("store", "moqui.security.TrustedDeviceUserAccount")
                     .parameters([deviceId: deviceId, userId: ec.user.userId,
                                  fromDate: ec.user.nowTimestamp, thruDate: thruDate,
-                                 name: curUserAgent])
+                                 name: name, visitId: ec.user.visitId])
                     .disableAuthz().call()
-            ]]></script></actions>
+            ]]></script>
+            <!-- send an email notifying of a new trusted device -->
+            <set field="emailAddress" from="ec.user.getUserAccount().emailAddress"/>
+            <service-call name="org.moqui.impl.EmailServices.send#EmailTemplate" async="true">
+                <field-map field-name="emailTemplateId" value="ADDED_TRUSTED_DEVICE"/>
+                <field-map field-name="toAddresses" from="emailAddress"/>
+                <field-map field-name="bodyParameters" from="[deviceId:deviceId,name:name]"/>
+            </service-call>
+            <message>New trusted device(${deviceId}) added for ${emailAddress}\n${name}</message>
+        </actions>
     </service>
 
     <service verb="create" noun="UserAccount" authenticate="anonymous-all" allow-remote="false">

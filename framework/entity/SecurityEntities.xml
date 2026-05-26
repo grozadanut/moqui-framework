@@ -407,8 +407,10 @@ along with this software (see the LICENSE.md file). If not, see
         <field name="fromDate" type="date-time"/>
         <field name="thruDate" type="date-time"/>
         <field name="name" type="text-medium"/>
+        <field name="visitId" type="id"/>
         <relationship type="one" related="moqui.security.TrustedDevice" short-alias="device"/>
         <relationship type="one" related="moqui.security.UserAccount" short-alias="user"/>
+        <relationship type="one" related="moqui.server.Visit" short-alias="visit"/>
     </entity>
     <view-entity entity-name="TrustedDeviceUsers" package="moqui.security">
         <member-entity entity-alias="TDU" entity-name="moqui.security.TrustedDeviceUserAccount"/>
