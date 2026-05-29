@@ -2,4 +2,5 @@
     <component group="grozadanut" name="moqui-linic-legacy" version="" branch="master"/>
     <component group="grozadanut" name="dav-server" branch="master"/>
     <component group="grozadanut" name="moqui-anaf-efactura" branch="master"/>
+    <component group="grozadanut" name="CredentialManager" branch="master"/>
 </addons>
