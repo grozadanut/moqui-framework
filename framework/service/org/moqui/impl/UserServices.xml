@@ -98,11 +98,13 @@ along with this software (see the LICENSE.md file). If not, see
                 jakarta.servlet.http.Cookie deviceIdCookie = new jakarta.servlet.http.Cookie("deviceId", deviceId)
                 deviceIdCookie.setPath("/")
                 deviceIdCookie.setHttpOnly(true)
+                deviceIdCookie.setMaxAge(60 * 60 * 24 * 365 * 5) // 5 years
                 if (ec.web?.request?.isSecure()) deviceIdCookie.setSecure(true)
                 ec.web?.response?.addCookie(deviceIdCookie)
                 jakarta.servlet.http.Cookie deviceSecretCookie = new jakarta.servlet.http.Cookie("deviceSecret", deviceSecret)
                 deviceSecretCookie.setPath("/")
                 deviceSecretCookie.setHttpOnly(true)
+                deviceSecretCookie.setMaxAge(60 * 60 * 24 * 365 * 5) // 5 years
                 if (ec.web?.request?.isSecure()) deviceSecretCookie.setSecure(true)
                 ec.web?.response?.addCookie(deviceSecretCookie)
             }
