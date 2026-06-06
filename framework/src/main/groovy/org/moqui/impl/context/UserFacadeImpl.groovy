@@ -183,7 +183,8 @@ class UserFacadeImpl implements UserFacade {
         if (eci.messageFacade.hasError()) request.setAttribute("moqui.login.error", "true")
 
         // NOTE: only tracking Visitor and Visit if there is a WebFacadeImpl in place
-        if (eci.webImpl != null && !this.visitId && !eci.getSkipStats()) {
+        if (eci.webImpl != null && !this.visitId &&
+                (!eci.getSkipStats() || request?.requestURI?.endsWith("/rest/login"))) {
             MNode serverStatsNode = eci.ecfi.getServerStatsNode()
             ScreenUrlInfo sui = ScreenUrlInfo.getScreenUrlInfo(eci.screenFacade, request)
             // before doing anything with the visit, etc make sure exists
