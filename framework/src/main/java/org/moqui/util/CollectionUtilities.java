@@ -677,4 +677,13 @@ public class CollectionUtilities {
 
         return context;
     }
+
+    public static Map<String, Object> findFirstByKeyValue(List<Map<String, Object>> list, String key, Object value) {
+        for (Map<String, Object> item : list) {
+            if (Objects.equals(item.get(key), value)) {
+                return item;
+            }
+        }
+        return Map.of();
+    }
 }
