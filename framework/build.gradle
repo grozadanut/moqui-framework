@@ -116,6 +116,15 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
     api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
 
+    // BUG FIX: jaxb exception because of MClassLoader
+    // ec.logger.warn("TCCL: ${Thread.currentThread().contextClassLoader}")
+    // ec.logger.warn("UBL21Marshaller CL: ${UBL21Marshaller.class.classLoader}")
+    // ec.logger.warn("InvoiceType CL: ${InvoiceType.class.classLoader}")
+    // ec.logger.warn("JAXBContext CL: ${JAXBContext.class.classLoader}")
+    api 'com.helger.ubl:ph-ubl21:8.0.3'
+    api 'com.helger.ubl:ph-ubl21-codelists:8.0.3'
+    api 'org.glassfish.jaxb:jaxb-runtime:4.0.6'
+
     // Jetty HTTP Client and Proxy Servlet
     api 'org.eclipse.jetty:jetty-client:12.1.5' // Apache 2.0
     api 'org.eclipse.jetty.ee11:jetty-ee11-proxy:12.1.5' // Apache 2.0
